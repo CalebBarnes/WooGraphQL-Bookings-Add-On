@@ -10,7 +10,21 @@
  */
 
 namespace App\GraphQL;
+use WPGraphQL\Data\DataSource;
 
+
+
+// register bookableResources root field with acf fields
+add_filter( 'register_post_type_args', function( $args, $post_type ) {
+	if ($post_type == 'bookable_resource') {
+		 $args['show_in_graphql'] = true;
+		 $args['graphql_single_name'] = 'bookableResource';
+		 $args['graphql_plural_name'] = 'bookableResources';
+	}
+
+	return $args;
+
+}, 10, 2 );
 
 // add_action( 'admin_init', function (){
 //     $product = wc_get_product(497);
@@ -18,7 +32,6 @@ namespace App\GraphQL;
 // 	var_dump($product->get_resources());
 // 	die();
 // });
-
 
 
 const TYPE_BOOKING_PRODUCT = 'BookingProduct';
@@ -76,7 +89,7 @@ add_action( 'graphql_register_types', function () {
 			'interfaces'  => [ 'Node' ], // Following same pattern that other product types declare
 			'fields'      =>
 				[
-					'id' => [
+					'databaseId' => [
 						'type' => 'Int',
 						'resolve' => function ( $source ) {
 							return $source->get_id();
@@ -87,6 +100,25 @@ add_action( 'graphql_register_types', function () {
 						'resolve' => function ( $source ) {
 							return $source->get_name();
 						},
+					],
+					// 'image'       => [
+					// 	'type'        => 'MediaItem',
+					// 	'description' => 'Booking Resource image',
+					// 	'resolve'     => function( $source, array $args, AppContext $context ) {
+
+					// 		$image = get_field('image', $source->get_id());
+
+					// 		// return DataSource::resolve_post_object( $image["id"], $context );
+					// 		return $image;
+
+					// 	},
+					// ],
+					'description' => [
+						'type' 			=> 'String',
+						'description' 	=> 'Booking Resource description',
+						'resolve' 		=> function ( $source ) {
+							return get_field('description', $source->get_id());
+						}
 					],
 				],
 		]
