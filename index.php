@@ -42,46 +42,7 @@ const TYPE_BOOKING_RESOURCE = 'BookingResource';
  */
 add_action( 'graphql_register_types', function () {
 
-
-
-	/**
-	 * Register our 'booking' object type
-	 */
-	register_graphql_object_type( TYPE_BOOKING_PRODUCT, [
-			'description' => 'A product booking object',
-			'interfaces'  => [ 'Node', 'Product' ], // Following same pattern that other product types declare
-			'fields'      =>
-				[
-					'price' => [
-						'type'    => 'String',
-						'resolve' => function ( $source ) {
-							return $source->get_price();
-						},
-					],
-					'salePrice' => [
-						'type'    => 'String',
-						'resolve' => function ( $source ) {
-							return $source->get_sale_price();
-						},
-					],
-					'regularPrice' => [
-						'type'    => 'String',
-						'resolve' => function ( $source ) {
-							return $source->get_regular_price();
-						},
-                    ],
-					'resources' => [
-						'type' => ['list_of' => TYPE_BOOKING_RESOURCE],
-						'resolve' => function( $source ) {
-							return $source->get_resources();
-						}
-					]
-				],
-		]
-    );
-
-
-    /**
+   /**
 	 * Register our 'booking resource' object type
 	 */
 	register_graphql_object_type( TYPE_BOOKING_RESOURCE, [
@@ -123,6 +84,45 @@ add_action( 'graphql_register_types', function () {
 				],
 		]
     );
+
+	/**
+	 * Register our 'booking' object type
+	 */
+	register_graphql_object_type( TYPE_BOOKING_PRODUCT, [
+			'description' => 'A product booking object',
+			'interfaces'  => [ 'Node', 'Product' ], // Following same pattern that other product types declare
+			'fields'      =>
+				[
+					'price' => [
+						'type'    => 'String',
+						'resolve' => function ( $source ) {
+							return $source->get_price();
+						},
+					],
+					'salePrice' => [
+						'type'    => 'String',
+						'resolve' => function ( $source ) {
+							return $source->get_sale_price();
+						},
+					],
+					'regularPrice' => [
+						'type'    => 'String',
+						'resolve' => function ( $source ) {
+							return $source->get_regular_price();
+						},
+                    ],
+					'resources' => [
+						'type' => ['list_of' => TYPE_BOOKING_RESOURCE],
+						'resolve' => function( $source ) {
+							return $source->get_resources();
+						}
+					]
+				],
+		]
+    );
+
+
+ 
     
 	/**
 	 * Register root query for bundle
@@ -134,6 +134,19 @@ add_action( 'graphql_register_types', function () {
 		'bookingProduct',
 		[
 			'type' => TYPE_BOOKING_PRODUCT,
+		]
+	);
+    
+	/**
+	 * Register root query for bundle
+   	 *
+   	 * @todo - still need to provide args to pass in filter values such as ID
+	 */
+	register_graphql_field(
+		'RootQuery',
+		'bookingResource',
+		[
+			'type' => TYPE_BOOKING_RESOURCE,
 		]
 	);
 
